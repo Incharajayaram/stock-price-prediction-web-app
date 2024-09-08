@@ -45,7 +45,7 @@ google_data = yf.download(stock, start, end)
 st.subheader("Stock Data")
 st.write(google_data)
 
-model = load_model(r"Latest_stcok_price_model.keras")
+model = load_model(r"Latest_stcok_price_model.h5")
 
 
 def online_learning(model, new_data, scaler):
