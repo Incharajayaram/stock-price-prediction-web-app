@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import tensorflow as tf
 from keras.models import load_model # type: ignore
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
@@ -45,7 +46,7 @@ st.subheader("Stock Data")
 st.write(google_data)
 
 try:
-    model = load_model(r"Latest_stcok_price_model.keras")
+   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
