@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -8,7 +9,8 @@ from datetime import datetime, timedelta
 import yfinance as yf
 
 try:
-   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
+    model = os.path.join(os.path.dirname(__file__), 'Latest_stcok_price_model.keras')
+
 except Exception as e:
    st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
     
