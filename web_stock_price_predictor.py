@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import yfinance as yf
 
+try:
+   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    
+
 def online_learning(model, new_data, scaler):
     scaled_new_data = scaler.transform(new_data)
     x_new = scaled_new_data[:-1].reshape(1, -1, 1)
@@ -44,12 +50,6 @@ google_data = yf.download(stock, start, end)
 
 st.subheader("Stock Data")
 st.write(google_data)
-
-try:
-   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    
 
 splitting_len = int(len(google_data)*0.7)
 x_test = pd.DataFrame(google_data.Close[splitting_len:])
