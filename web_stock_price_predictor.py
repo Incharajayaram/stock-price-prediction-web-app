@@ -45,7 +45,7 @@ st.subheader("Stock Data")
 st.write(google_data)
 
 try:
-    model = load_model(r"Latest_stcok_price_model.h5")
+    model = load_model(r"Latest_stcok_price_model.keras")
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
