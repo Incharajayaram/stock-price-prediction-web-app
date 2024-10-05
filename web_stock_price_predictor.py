@@ -7,10 +7,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import yfinance as yf
 
-try:
-   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
-except Exception as e:
-   st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
     
 
 def online_learning(model, new_data, scaler):
@@ -90,6 +86,31 @@ for i in range(100,len(scaled_data)):
     y_data.append(scaled_data[i])
 
 x_data, y_data = np.array(x_data), np.array(y_data)
+
+try:
+   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
+except Exception as e:
+   st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
+
+if not model:
+    from keras_models import LSTM, Dense, Sequential
+    splitting_len = int(len(x_data)*0.7)
+    x_train = x_data[:splitting_len]
+    y_train = y_data[:splitting_len]
+
+    x_test = x_data[splitting_len:]
+    y_test = y_data[splitting_len:]
+    model = Sequential()
+    model.add(LSTM(128, input_shape=(100, 1), return_sequences=True))
+    model.add(LSTM(64))
+    model.add(Dense(25, activation='relu'))
+    model.add(Dense(1))
+
+    # Compile the model
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    # Train the model (x_train and y_train are your training data)
+    model.fit(x_train, y_train, epochs=4, batch_size=64)
 
 predictions = model.predict(x_data)
 
