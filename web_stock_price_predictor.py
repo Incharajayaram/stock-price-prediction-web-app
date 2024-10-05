@@ -87,19 +87,23 @@ for i in range(100,len(scaled_data)):
 
 x_data, y_data = np.array(x_data), np.array(y_data)
 
+from keras.models import Sequential
+from keras.layers import LSTM, Dense
+
+# Try to load the model
 try:
-   model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
+    model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
 except Exception as e:
-   st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
+    st.error(f"Error loading model: {str(e)}")
+    model = None  # Set model to None if loading fails
 
-if not model:
-    from keras_models import LSTM, Dense, Sequential
-    splitting_len = int(len(x_data)*0.7)
-    x_train = x_data[:splitting_len]
-    y_train = y_data[:splitting_len]
+# If model loading fails, define and train a new one
+if model is None:
+    splitting_len = int(len(x_data) * 0.7)
+    x_train, y_train = x_data[:splitting_len], y_data[:splitting_len]
+    x_test, y_test = x_data[splitting_len:], y_data[splitting_len:]
 
-    x_test = x_data[splitting_len:]
-    y_test = y_data[splitting_len:]
+    # Define the model
     model = Sequential()
     model.add(LSTM(128, input_shape=(100, 1), return_sequences=True))
     model.add(LSTM(64))
@@ -109,11 +113,13 @@ if not model:
     # Compile the model
     model.compile(optimizer='adam', loss='mean_squared_error')
 
-    # Train the model (x_train and y_train are your training data)
+    # Train the model
     model.fit(x_train, y_train, epochs=4, batch_size=64)
 
-predictions = model.predict(x_data)
+    # Optionally, save the model after training
+    model.save("Latest_stcok_price_model.keras")
 
+predictions = model.predict(x_data)
 inv_pre = scaler.inverse_transform(predictions)
 inv_y_test = scaler.inverse_transform(y_data)
 
