@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-from keras.models import load_model # type: ignore
+from tensorflow.keras.models import load_model # type: ignore
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import yfinance as yf
