@@ -50,6 +50,8 @@ try:
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
+scaler = MinMaxScaler(feature_range=(0, 1))
+
 splitting_len = int(len(google_data)*0.7)
 x_test = pd.DataFrame(google_data.Close[splitting_len:])
 
