@@ -1,19 +1,26 @@
 import streamlit as st
-import os
 import pandas as pd
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.models import load_model # type: ignore
+from keras.models import load_model # type: ignore
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import yfinance as yf
+from datetime import timedelta, datetime
 
-try:
-    model = os.path.join(os.path.dirname(__file__), 'Latest_stcok_price_model.keras')
+st.markdown("<h2 style='text-align: left; color: white;'>Enter the Stock ID</h2>", unsafe_allow_html=True)
+stock = st.text_input("", "GOOG")
 
-except Exception as e:
-   st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
-    
+from datetime import datetime
+end = datetime.now()
+start = datetime(end.year-20,end.month,end.day)
+
+google_data = yf.download(stock, start, end)
+
+st.subheader("Stock Data")
+st.write(google_data)
+
+model = load_model(r"Latest_stcok_price_model.keras")
+
 
 def online_learning(model, new_data, scaler):
     scaled_new_data = scaler.transform(new_data)
@@ -30,6 +37,7 @@ def update_data_and_model(stock, model, scaler, last_100_days):
     end = datetime.now()
     start = end - timedelta(days=1)
     new_data = yf.download(stock, start, end)
+    
     if not new_data.empty:
         new_close = new_data['Adj Close'].values[-1]
         last_100_days = np.append(last_100_days[1:], new_close)
@@ -41,22 +49,7 @@ def update_data_and_model(stock, model, scaler, last_100_days):
     
     return last_100_days
 
-st.markdown("<h2 style='text-align: left; color: white;'>Enter the Stock ID</h2>", unsafe_allow_html=True)
-stock = st.text_input("", "GOOG")
 
-from datetime import datetime
-end = datetime.now()
-start = datetime(end.year-20,end.month,end.day)
-
-try:
-    google_data = yf.download(stock, start, end)
-    if google_data.empty:
-        raise ValueError("No data found for the specified stock.")
-except Exception as e:
-    st.error(f"Error fetching data: {str(e)}")
-
-st.subheader("Stock Data")
-st.write(google_data)
 
 splitting_len = int(len(google_data)*0.7)
 x_test = pd.DataFrame(google_data.Close[splitting_len:])
