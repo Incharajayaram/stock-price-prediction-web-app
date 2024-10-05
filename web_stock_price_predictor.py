@@ -10,7 +10,7 @@ import yfinance as yf
 try:
    model = tf.keras.models.load_model("Latest_stcok_price_model.keras")
 except Exception as e:
-    st.error(f"Error loading model: {e}")
+   st.error(f"Error loading model: {str(e)}")  # Add str() to capture detailed error message
     
 
 def online_learning(model, new_data, scaler):
