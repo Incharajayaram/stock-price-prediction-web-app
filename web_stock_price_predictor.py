@@ -48,7 +48,12 @@ from datetime import datetime
 end = datetime.now()
 start = datetime(end.year-20,end.month,end.day)
 
-google_data = yf.download(stock, start, end)
+try:
+    google_data = yf.download(stock, start, end)
+    if google_data.empty:
+        raise ValueError("No data found for the specified stock.")
+except Exception as e:
+    st.error(f"Error fetching data: {str(e)}")
 
 st.subheader("Stock Data")
 st.write(google_data)
